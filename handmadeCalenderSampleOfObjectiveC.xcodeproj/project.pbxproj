@@ -412,6 +412,7 @@
 				DEA20B921A08354C002FA862 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DEA20B931A08354C002FA862 /* Build configuration list for PBXNativeTarget "handmadeCalenderSampleOfObjectiveCTests" */ = {
 			isa = XCConfigurationList;
@@ -420,6 +421,7 @@
 				DEA20B951A08354C002FA862 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
