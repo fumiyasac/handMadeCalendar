@@ -13,12 +13,12 @@
 
 @interface ViewController ()
 
-//プロパティを指定
+//使い回す変数を設定する
 {
     int count;
     NSMutableArray *mArray;
     
-    //カレンダー表示用変数
+    //カレンダー表示用メンバ変数
     NSDate *now;
     int year;
     int month;
@@ -26,14 +26,16 @@
     int maxDay;
     int dayOfWeek;
     
+    //カレンダーから取得したものを格納する
     NSUInteger flags;
     NSDateComponents *comps;
     
+    //ボタンのバックグラウンドカラー
     UIColor *calendarBackGroundColor;
 }
 
+//プロパティを指定
 @property (strong, nonatomic) IBOutlet UILabel *calendarBar;
-
 @property (strong, nonatomic) IBOutlet UIButton *prevMonthButton;
 @property (strong, nonatomic) IBOutlet UIButton *nextMonthButton;
 @end
@@ -55,25 +57,26 @@
     NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     NSRange range = [calendar rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:now];
     
+    //最初にメンバ変数に格納するための現在日付の情報を取得する
     flags = NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday;
     comps = [calendar components:flags fromDate:now];
     
-    NSInteger orgYear = comps.year;
-    NSInteger orgMonth = comps.month;
-    NSInteger orgDay = comps.day;
+    //年月日と最後の日付を取得(NSIntegerをintへ変換)
+    NSInteger orgYear      = comps.year;
+    NSInteger orgMonth     = comps.month;
+    NSInteger orgDay       = comps.day;
     NSInteger orgDayOfWeek = comps.weekday;
-    NSInteger max = range.length;
+    NSInteger max          = range.length;
     
-    //年月日を取得(NSIntegerをintへ変換)
-    year = orgYear;
-    month = orgMonth;
-    day = orgDay;
-    dayOfWeek = orgDayOfWeek;
+    year      = (int)orgYear;
+    month     = (int)orgMonth;
+    day       = (int)orgDay;
+    dayOfWeek = (int)orgDayOfWeek;
     
     //月末日(NSIntegerをintへ変換)
-    maxDay = max;
+    maxDay = (int)max;
     
-    //空の配列を作成する
+    //空の配列を作成する（カレンダーデータの格納用）
     mArray = [NSMutableArray new];
     
     //曜日ラベル初期定義
@@ -90,20 +93,26 @@
 -(void)setupCalendarLabel:(NSArray *)array
 {
     int calendarTitle = 7;
+    
     for(int j=0; j<calendarTitle; j++){
+        
         UILabel *calendarBaseLabel = [UILabel new];
         calendarBaseLabel.frame = CGRectMake(5 + 45 * (j % calendarTitle), 50, 40, 25);
         
         //日曜日のとき
         if(j == 0){
             calendarBaseLabel.textColor = [UIColor colorWithRed:0.831 green:0.349 blue:0.224 alpha:1.0];
-            //土曜日のとき
+        
+        //土曜日のとき
         }else if(j == 6){
             calendarBaseLabel.textColor = [UIColor colorWithRed:0.400 green:0.471 blue:0.980 alpha:1.0];
-            //平日
+            
+        //平日
         }else{
             calendarBaseLabel.textColor = [UIColor lightGrayColor];
         }
+        
+        //曜日の配置を行う
         calendarBaseLabel.text = [array objectAtIndex:j];
         calendarBaseLabel.textAlignment = NSTextAlignmentCenter;
         calendarBaseLabel.font = [UIFont systemFontOfSize:14];
@@ -112,7 +121,7 @@
 }
 
 //現在カレンダーのセットアップ
--(void)setupCurrentCalendar
+- (void)setupCurrentCalendar
 {
     [self setupCurrentCalendarData];
     [self generateCalendar];
@@ -139,17 +148,25 @@
         button.frame = CGRectMake(positionX,positionY,buttonSize,buttonSize);
         
         if(i < dayOfWeek - 1){
+            
+            //日付の入らない部分はボタンを押せなくする
             [button setTitle:@"" forState:UIControlStateNormal];
             [button setEnabled:NO];
+            
         }else if(i == dayOfWeek - 1 || i < dayOfWeek + maxDay - 1){
             
+            //日付の入る部分はボタンのタグを設定する（日にち）
             NSString *tagNumberString = [NSString stringWithFormat:@"%d", tagNumber];
             [button setTitle:tagNumberString forState:UIControlStateNormal];
             button.tag = tagNumber;
             tagNumber++;
+            
         }else if(i == dayOfWeek + maxDay - 1 || i < total){
+            
+            //日付の入らない部分はボタンを押せなくする
             [button setTitle:@"" forState:UIControlStateNormal];
             [button setEnabled:NO];
+            
         }
         
         //ボタンデザインと配色の決定
@@ -160,13 +177,17 @@
         }else{
             calendarBackGroundColor = [UIColor lightGrayColor];
         }
+        
+        //ボタンのデザインを決定する
         [button setBackgroundColor:calendarBackGroundColor];
         [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [button.titleLabel setFont:[UIFont systemFontOfSize:17]];
         [button.layer setCornerRadius:20.0];
         
+        //配置したボタンに押した際のアクションを設定する
         [button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
         
+        //ボタンを配置する
         [self.view addSubview:button];
         [mArray addObject:button];
     }
@@ -175,19 +196,24 @@
 //現在の年月に該当するデータを取得
 - (void)setupCurrentCalendarData
 {
+    //inUnitで指定した単位（月）の中で、rangeOfUnit:で指定した単位（日）が取り得る範囲
     NSCalendar *currentCalendar = [NSCalendar currentCalendar];
     NSDateComponents *currentComps = [[NSDateComponents alloc] init];
+    
+    //該当月の1日の情報を取得する（※カレンダーが始まる場所を取得するため）
     [currentComps setYear:year];
     [currentComps setMonth:month];
     [currentComps setDay:1];
     NSDate *currentDate = [currentCalendar dateFromComponents:currentComps];
     
+    //カレンダー情報を再作成する
     [self recreateCalendarParameter:currentCalendar dateObject:currentDate];
 }
 
 //prevボタン押下に該当するデータを取得
 - (void)setupPrevCalendarData
 {
+    //前の月を設定する
     if(month == 0){
         year = year - 1;
         month = 12;
@@ -195,19 +221,24 @@
         month = month - 1;
     }
     
+    //inUnit:で指定した単位（月）の中で、rangeOfUnit:で指定した単位（日）が取り得る範囲
     NSCalendar *prevCalendar = [NSCalendar currentCalendar];
     NSDateComponents *prevComps = [[NSDateComponents alloc] init];
+    
+    //該当月の1日の情報を取得する（※カレンダーが始まる場所を取得するため）
     [prevComps setYear:year];
     [prevComps setMonth:month];
     [prevComps setDay:1];
     NSDate *prevDate = [prevCalendar dateFromComponents:prevComps];
     
+    //カレンダー情報を再作成する
     [self recreateCalendarParameter:prevCalendar dateObject:prevDate];
 }
 
 //nextボタン押下に該当するデータを取得
 - (void)setupNextCalendarData
 {
+    //次の月を設定する
     if(month == 12){
         year = year + 1;
         month = 1;
@@ -215,13 +246,17 @@
         month = month + 1;
     }
     
+    //inUnit:で指定した単位（月）の中で、rangeOfUnit:で指定した単位（日）が取り得る範囲
     NSCalendar *nextCalendar = [NSCalendar currentCalendar];
     NSDateComponents *nextComps = [[NSDateComponents alloc] init];
+    
+    //該当月の1日の情報を取得する（※カレンダーが始まる場所を取得するため）
     [nextComps setYear:year];
     [nextComps setMonth:month];
     [nextComps setDay:1];
     NSDate *nextDate = [nextCalendar dateFromComponents:nextComps];
     
+    //カレンダー情報を再作成する
     [self recreateCalendarParameter:nextCalendar dateObject:nextDate];
 }
 
@@ -233,27 +268,24 @@
     
     NSRange currentRange = [currentCalendar rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:currentDate];
     
-    NSInteger currentYear = comps.year;
-    NSInteger currentMonth = comps.month;
-    NSInteger currentDay = comps.day;
+    //年月日と最後の日付を取得(NSIntegerをintへ変換)
+    NSInteger currentYear      = comps.year;
+    NSInteger currentMonth     = comps.month;
+    NSInteger currentDay       = comps.day;
     NSInteger currentDayOfWeek = comps.weekday;
-    NSInteger currentMax = currentRange.length;
+    NSInteger currentMax       = currentRange.length;
     
-    //年月日を取得(NSIntegerをintへ変換)
-    year = currentYear;
-    month = currentMonth;
-    day = currentDay;
-    dayOfWeek = currentDayOfWeek;
-    maxDay = currentMax;
+    year      = (int)currentYear;
+    month     = (int)currentMonth;
+    day       = (int)currentDay;
+    dayOfWeek = (int)currentDayOfWeek;
+    maxDay    = (int)currentMax;
 }
 
 - (IBAction)getNextMonthData:(id)sender
 {
-    //表示されているボタンオブジェクトを殺す
-    for (int i=0; i<[mArray count]; i++) {
-        [mArray[i] removeFromSuperview];
-    }
-    [mArray removeAllObjects];
+    //表示されているボタンオブジェクトを削除
+    [self removeCalendarButtonObject];
     
     //カレンダーのセットアップ
     [self setupNextCalendarData];
@@ -263,31 +295,43 @@
 
 - (IBAction)getPrevMonthData:(id)sender
 {
-    //表示されているボタンオブジェクトを殺す
-    for (int i=0; i<[mArray count]; i++) {
-        [mArray[i] removeFromSuperview];
-    }
-    [mArray removeAllObjects];
-    
+    //表示されているボタンオブジェクトを削除
+    [self removeCalendarButtonObject];
+
     //カレンダーのセットアップ
     [self setupPrevCalendarData];
     [self generateCalendar];
     [self setupCalendarTitleLabel];
 }
 
+//表示されているボタンオブジェクトを一旦削除する
+- (void)removeCalendarButtonObject
+{
+    //ビューからボタンオブジェクトを削除する
+    for (int i=0; i<[mArray count]; i++) {
+        [mArray[i] removeFromSuperview];
+    }
+    
+    //配列に格納したボタンオブジェクトも削除する
+    [mArray removeAllObjects];
+}
+
+//カレンダーボタンタップ時の処理
+-(void)buttonTapped:(UIButton *)button
+{
+    NSLog(@"%d年%d月%d日が選択されました！", year, month, (int)button.tag);
+}
+
 //タイトルバーの設定
 - (void)setupCalendarTitleLabel
 {
+    //押された日付を表示する
     self.calendarBar.text = [NSString stringWithFormat:@"%d年%d月のカレンダー", year, month];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-}
-
--(void)buttonTapped:(UIButton*)button{
-    NSLog(@"タグ：%d",button.tag);
 }
 
 @end
