@@ -25,7 +25,7 @@ HandMadeCalendar（Objective-C版）
 *iPhone4s  
 *iPhone5  
 *iPhone5s  
-*iPhone6
+*iPhone6  
 *iPhone6 plus
 
 2015/01/08: 暫定的なマルチデバイス対応を上記のエミュレータにて検証しています。
