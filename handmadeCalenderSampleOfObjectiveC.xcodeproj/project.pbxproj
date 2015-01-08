@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DE3BE56D1A5EC34400C49B3C /* DeviseSize.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3BE56C1A5EC34400C49B3C /* DeviseSize.m */; };
 		DEA20B731A08354C002FA862 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DEA20B721A08354C002FA862 /* main.m */; };
 		DEA20B761A08354C002FA862 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DEA20B751A08354C002FA862 /* AppDelegate.m */; };
 		DEA20B791A08354C002FA862 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DEA20B781A08354C002FA862 /* ViewController.m */; };
@@ -27,6 +28,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DE3BE56B1A5EC34400C49B3C /* DeviseSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviseSize.h; sourceTree = "<group>"; };
+		DE3BE56C1A5EC34400C49B3C /* DeviseSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviseSize.m; sourceTree = "<group>"; };
 		DEA20B6D1A08354C002FA862 /* handmadeCalenderSampleOfObjectiveC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = handmadeCalenderSampleOfObjectiveC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DEA20B711A08354C002FA862 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DEA20B721A08354C002FA862 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -83,6 +86,8 @@
 			children = (
 				DEA20B741A08354C002FA862 /* AppDelegate.h */,
 				DEA20B751A08354C002FA862 /* AppDelegate.m */,
+				DE3BE56B1A5EC34400C49B3C /* DeviseSize.h */,
+				DE3BE56C1A5EC34400C49B3C /* DeviseSize.m */,
 				DEA20B771A08354C002FA862 /* ViewController.h */,
 				DEA20B781A08354C002FA862 /* ViewController.m */,
 				DEA20B7A1A08354C002FA862 /* Main.storyboard */,
@@ -221,6 +226,7 @@
 			files = (
 				DEA20B791A08354C002FA862 /* ViewController.m in Sources */,
 				DEA20B761A08354C002FA862 /* AppDelegate.m in Sources */,
+				DE3BE56D1A5EC34400C49B3C /* DeviseSize.m in Sources */,
 				DEA20B731A08354C002FA862 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

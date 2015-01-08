@@ -8,6 +8,9 @@
 
 #import "ViewController.h"
 
+//DeviseSizeクラスのインポート
+#import "DeviseSize.h"
+
 //CALayerクラスのインポート
 #import <QuartzCore/QuartzCore.h>
 
@@ -32,6 +35,23 @@
     
     //ボタンのバックグラウンドカラー
     UIColor *calendarBackGroundColor;
+    
+    //カレンダーの位置決め用メンバ変数
+    int calendarLabelIntervalX;
+    int calendarLabelX;
+    int calendarLabelY;
+    int calendarLabelWidth;
+    int calendarLabelHeight;
+    int calendarLableFontSize;
+    
+    float buttonRadius;
+    
+    int calendarIntervalX;
+    int calendarX;
+    int calendarIntervalY;
+    int calendarY;
+    int calendarSize;
+    int calendarFontSize;
 }
 
 //プロパティを指定
@@ -46,9 +66,95 @@
 {
     [super viewDidLoad];
     
+    //現在起動中のデバイスを取得
+    NSString *deviceName = [DeviseSize getNowDisplayDevice];
+    
+    //iPhone4s
+    if([deviceName isEqual:@"iPhone4s"]){
+        
+        calendarLabelIntervalX = 5;
+        calendarLabelX         = 45;
+        calendarLabelY         = 93;
+        calendarLabelWidth     = 40;
+        calendarLabelHeight    = 25;
+        calendarLableFontSize  = 14;
+        
+        buttonRadius           = 20.0;
+        
+        calendarIntervalX      = 5;
+        calendarX              = 45;
+        calendarIntervalY      = 120;
+        calendarY              = 45;
+        calendarSize           = 40;
+        calendarFontSize       = 17;
+        
+    //iPhone5またはiPhone5s
+    }else if ([deviceName isEqual:@"iPhone5"]){
+        
+        calendarLabelIntervalX = 5;
+        calendarLabelX         = 45;
+        calendarLabelY         = 93;
+        calendarLabelWidth     = 40;
+        calendarLabelHeight    = 25;
+        calendarLableFontSize  = 14;
+        
+        buttonRadius           = 20.0;
+        
+        calendarIntervalX      = 5;
+        calendarX              = 45;
+        calendarIntervalY      = 120;
+        calendarY              = 45;
+        calendarSize           = 40;
+        calendarFontSize       = 17;
+        
+        //iPhone6
+    }else if ([deviceName isEqual:@"iPhone6"]){
+        
+        calendarLabelIntervalX = 15;
+        calendarLabelX         = 50;
+        calendarLabelY         = 95;
+        calendarLabelWidth     = 45;
+        calendarLabelHeight    = 25;
+        calendarLableFontSize  = 16;
+        
+        buttonRadius           = 22.5;
+        
+        calendarIntervalX      = 15;
+        calendarX              = 50;
+        calendarIntervalY      = 125;
+        calendarY              = 50;
+        calendarSize           = 45;
+        calendarFontSize       = 19;
+        
+        self.prevMonthButton.frame = CGRectMake(15, 438, calendarSize, calendarSize);
+        self.nextMonthButton.frame = CGRectMake(314, 438, calendarSize, calendarSize);
+        
+    //iPhone6 plus
+    }else if ([deviceName isEqual:@"iPhone6plus"]){
+        
+        calendarLabelIntervalX = 15;
+        calendarLabelX         = 55;
+        calendarLabelY         = 95;
+        calendarLabelWidth     = 55;
+        calendarLabelHeight    = 25;
+        calendarLableFontSize  = 18;
+        
+        buttonRadius           = 25;
+        
+        calendarIntervalX      = 18;
+        calendarX              = 55;
+        calendarIntervalY      = 125;
+        calendarY              = 55;
+        calendarSize           = 50;
+        calendarFontSize       = 21;
+        
+        self.prevMonthButton.frame = CGRectMake(18, 468, calendarSize, calendarSize);
+        self.nextMonthButton.frame = CGRectMake(348, 468, calendarSize, calendarSize);
+    }
+    
     //ボタンを角丸にする
-    [self.prevMonthButton.layer setCornerRadius:5.0];
-    [self.nextMonthButton.layer setCornerRadius:5.0];
+    [self.prevMonthButton.layer setCornerRadius:buttonRadius];
+    [self.nextMonthButton.layer setCornerRadius:buttonRadius];
     
     //現在の日付を取得
     now = [NSDate date];
@@ -97,7 +203,12 @@
     for(int j=0; j<calendarTitle; j++){
         
         UILabel *calendarBaseLabel = [UILabel new];
-        calendarBaseLabel.frame = CGRectMake(5 + 45 * (j % calendarTitle), 50, 40, 25);
+        calendarBaseLabel.frame = CGRectMake(
+            calendarLabelIntervalX + calendarLabelX * (j % calendarTitle),
+            calendarLabelY,
+            calendarLabelWidth,
+            calendarLabelHeight
+        );
         
         //日曜日のとき
         if(j == 0){
@@ -115,7 +226,7 @@
         //曜日の配置を行う
         calendarBaseLabel.text = [array objectAtIndex:j];
         calendarBaseLabel.textAlignment = NSTextAlignmentCenter;
-        calendarBaseLabel.font = [UIFont systemFontOfSize:14];
+        calendarBaseLabel.font = [UIFont systemFontOfSize:calendarLableFontSize];
         [self.view addSubview:calendarBaseLabel];
     }
 }
@@ -139,9 +250,9 @@
     for(int i=0; i<total; i++) {
         
         //配置場所の定義
-        int positionX = 5 + 45 * (i % 7);
-        int positionY = 90 + 45 * (i / 7);
-        int buttonSize = 40;
+        int positionX  = calendarIntervalX + calendarX * (i % 7);
+        int positionY  = calendarIntervalY + calendarY * (i / 7);
+        int buttonSize = calendarSize;
         
         //42個分のボタンを配置
         UIButton *button = [UIButton new];
@@ -181,8 +292,8 @@
         //ボタンのデザインを決定する
         [button setBackgroundColor:calendarBackGroundColor];
         [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [button.titleLabel setFont:[UIFont systemFontOfSize:17]];
-        [button.layer setCornerRadius:20.0];
+        [button.titleLabel setFont:[UIFont systemFontOfSize:calendarFontSize]];
+        [button.layer setCornerRadius:buttonRadius];
         
         //配置したボタンに押した際のアクションを設定する
         [button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
