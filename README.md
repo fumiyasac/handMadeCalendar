@@ -25,10 +25,13 @@ HandMadeCalendar（Objective-C版）
 *iPhone4s  
 *iPhone5  
 *iPhone5s  
-（iPhone6系でもプログラム自体は正しく動作はしますが、レイアウトの崩れに関してはまだ未対応です。）  
+*iPhone6  
+*iPhone6 plus
+
+2015/01/08: 暫定的なマルチデバイス対応を上記のエミュレータにて検証しています。
   
 対応させる場合は下記を参考にして頂ければと思います。  
-  
+
 1.曜日表示ラベルの調整  
 (ViewController.m)  
 calendarBaseLabel.frameのCGReckMake内の数値を変更しての調整が可能です。  
