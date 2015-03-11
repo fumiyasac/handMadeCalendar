@@ -46,6 +46,13 @@
     
     float buttonRadius;
     
+    /* ----------- 祝日判定計算用メンバ変数（はじめ） -----------*/
+    //9月の国民の祝日判定用変数
+    int kokumin;
+    //5月のゴールデンウィークが日曜日と重なる場合の判定用変数
+    bool goldenWeekFlag;
+    /* ----------- 祝日判定計算用メンバ変数（おわり） -----------*/
+    
     int calendarIntervalX;
     int calendarX;
     int calendarIntervalY;
@@ -245,6 +252,7 @@
     //タグナンバーとトータルカウントを定義する
     int tagNumber = 1;
     int total = 42;
+    bool flg = false;
     
     //42個のボタンを配置する
     for(int i=0; i<total; i++) {
@@ -266,6 +274,8 @@
             
         }else if(i == dayOfWeek - 1 || i < dayOfWeek + maxDay - 1){
             
+            flg = [self holidayCalc:year tMonth:month tDay:tagNumber tIndex:i];
+            
             //日付の入る部分はボタンのタグを設定する（日にち）
             NSString *tagNumberString = [NSString stringWithFormat:@"%d", tagNumber];
             [button setTitle:tagNumberString forState:UIControlStateNormal];
@@ -273,6 +283,9 @@
             tagNumber++;
             
         }else if(i == dayOfWeek + maxDay - 1 || i < total){
+            
+            //2018年4月30日のように最終日が祝日になる場合があるのでフラグをもとに戻す
+            flg = false;
             
             //日付の入らない部分はボタンを押せなくする
             [button setTitle:@"" forState:UIControlStateNormal];
@@ -284,9 +297,19 @@
         if(i % 7 == 0){
             calendarBackGroundColor = [UIColor colorWithRed:0.831 green:0.349 blue:0.224 alpha:1.0];
         }else if(i % 7 == 6){
-            calendarBackGroundColor = [UIColor colorWithRed:0.400 green:0.471 blue:0.980 alpha:1.0];
+            //祝日フラグの判定
+            if(flg){
+                calendarBackGroundColor = [UIColor colorWithRed:0.831 green:0.349 blue:0.224 alpha:1.0];
+            }else{
+                calendarBackGroundColor = [UIColor colorWithRed:0.400 green:0.471 blue:0.980 alpha:1.0];
+            }
         }else{
-            calendarBackGroundColor = [UIColor lightGrayColor];
+            //祝日フラグの判定
+            if(flg){
+                calendarBackGroundColor = [UIColor colorWithRed:0.831 green:0.349 blue:0.224 alpha:1.0];
+            }else{
+                calendarBackGroundColor = [UIColor lightGrayColor];
+            }
         }
         
         //ボタンのデザインを決定する
@@ -303,6 +326,186 @@
         [mArray addObject:button];
     }
 }
+
+//祝日を判定する
+/* ----------- 祝日計算用の関数（はじめ） -----------*/
+- (BOOL)holidayCalc:(int)tYear tMonth:(int)tMonth tDay:(int)tagNumber tIndex:(int)i{
+    
+    //春分・秋分の計算式
+    int y2 = (tYear - 2000);
+    int syunbun = (int)(20.69115 + 0.2421904 * y2 - (int)(y2/4 + y2/100 + y2/400));
+    int syuubun = (int)(23.09000 + 0.2421904 * y2 - (int)(y2/4 + y2/100 + y2/400));
+    bool holidayFlag = false;
+    
+    if ((tMonth == 1) && (tagNumber == 1)) {
+        
+        //元日（1月1日なら）
+        holidayFlag = true;
+    }
+    else if ((tMonth == 1) && (i % 7 == 1) && (tagNumber == 2)) {
+        
+        //元日の振替休日（1月2日が月曜なら）
+        holidayFlag = true;
+    }
+    else if ((tMonth == 1) && ( (i == 8 || i == 15) && (tagNumber >= 8 && tagNumber <= 14) ) && (i % 7 == 1)) {
+        
+        //成人の日（1月の第2月曜なら）
+        holidayFlag = true;
+    }
+    else if ((tMonth == 2) && (tagNumber == 11)) {
+        
+        //建国記念の日（2月11日なら）
+        holidayFlag = true;
+    }
+    else if ((tMonth == 2) && (tagNumber == 12) && (i % 7 == 1)) {
+        
+        //建国記念の日の振替休日（2月12日が月曜なら）
+        holidayFlag = true;
+    }
+    else if ((tYear  > 1999) && (tMonth == 3) && (tagNumber == syunbun)) {
+        
+        //春分の日（計算式による）
+        holidayFlag = true;
+    }
+    else if ((tYear  > 1999) && (tMonth == 3) && (tagNumber == (syunbun + 1)) && (i % 7 == 1)) {
+        
+        //春分の日の振替休日
+        holidayFlag = true;
+    }
+    else if ((tMonth == 4) && (tagNumber == 29)) {
+        
+        //2006年みどりの日（4月29日なら）
+        holidayFlag = true;
+    }
+    else if ((tMonth == 4) && (tagNumber == 30) && (i % 7 == 1)) {
+        
+        //みどりの日の振替休日（4月30日が月曜なら）
+        holidayFlag = true;
+    }
+    else if ((tMonth == 5) && (tagNumber == 3)) {
+        if ((tYear > 2006) && (i % 7 == 0)) {
+            goldenWeekFlag = true;
+        }else{
+            goldenWeekFlag = false;
+        }
+        holidayFlag = true;
+    }
+    else if (
+             ((tYear < 2007) && (tMonth == 5) && (tagNumber == 4) && (i % 7 == 2)) ||
+             ((tYear < 2007) && (tMonth == 5) && (tagNumber == 4) && (i % 7 == 3)) ||
+             ((tYear < 2007) && (tMonth == 5) && (tagNumber == 4) && (i % 7 == 4)) ||
+             ((tYear < 2007) && (tMonth == 5) && (tagNumber == 4) && (i % 7 == 5)) ||
+             ((tYear < 2007) && (tMonth == 5) && (tagNumber == 4) && (i % 7 == 6))
+            ) {
+        
+        //国民の休日（5月4日が火～土曜日なら）
+        holidayFlag = true;
+    }
+    else if ((tYear > 2006) && (tMonth == 5) && (tagNumber == 4)) {
+        
+        //2007年以降みどりの日（5月4日なら）
+        if ((tYear > 2006) && (goldenWeekFlag != true) && (i % 7 == 0)) {
+            //みどりの日が日曜なら
+            goldenWeekFlag = true;
+        }
+        holidayFlag = true;
+    }
+    else if ((tMonth == 5) && (tagNumber == 5)) {
+        
+        //こどもの日（5月5日なら）
+        if ((tYear > 2006) && (goldenWeekFlag != true) && (i % 7 == 0)) {
+            //こどもの日が日曜なら
+            goldenWeekFlag = true;
+        }
+        holidayFlag = true;
+    }
+    else if ((tYear < 2007) && (tMonth == 5) && (tagNumber == 6) && (i % 7 == 1)) {
+        
+        //こどもの日の振替休日（5月6日が月曜なら）
+        holidayFlag = true;
+    }
+    else if ((tYear > 2006) && (goldenWeekFlag == true) && (tMonth == 5) && (tagNumber == 6)) {
+        
+        //３連祝日のどれかが日曜なら振替休日
+        holidayFlag = true;
+    }
+    else if ((tMonth == 7) && ((i == 15 || i == 22) && (tagNumber >= 15 && tagNumber <= 21)) && (i % 7 == 1)) {
+        
+        //海の日（7月の第3月曜なら）
+        holidayFlag = true;
+    }
+    else if ((tYear > 2015) && (tMonth == 8) && (tagNumber == 11)) {
+        
+        //2016年以降、山の日（8月11日）なら
+        holidayFlag = true;
+    }
+    else if ((tYear > 2015) && (tMonth == 8) && (tagNumber == 12) && (i % 7 == 1)) {
+        
+        //山の日の振替休日（8月12日が月曜なら）
+        holidayFlag = true;
+    }
+    else if ((tMonth == 9) && ((i == 15 || i == 22) && (tagNumber >= 15 && tagNumber <= 21)) && (i % 7 == 1)) {
+        
+        //敬老の日（9月の第3月曜なら）
+        int keiro = tagNumber;
+        if ((syuubun - keiro) == 2) {
+            kokumin = syuubun - 1;
+        }
+        holidayFlag = true;
+    }
+    else if ((kokumin) && ((tMonth == 9) && (tagNumber == kokumin))) {
+        
+        //９月の国民の休日が有りなら
+        holidayFlag = true;
+    }
+    else if ((tYear  > 1999 ) && (tMonth == 9) && (tagNumber == syuubun)) {
+        
+        //秋分の日（計算式による）
+        holidayFlag = true;
+    }
+    else if ((tYear  > 1999 ) && (tMonth == 9) && (tagNumber == (syuubun + 1)) && (i % 7 == 1)) {
+        
+        //秋分の日の振替休日
+        holidayFlag = true;
+    }
+    else if ((tMonth == 10) && ((i == 8 || i == 15) && (tagNumber >= 8 && tagNumber <= 14)) && (i % 7 == 1)) {
+        
+        //体育の日（10月の第2月曜なら）
+        holidayFlag = true;
+    }
+    else if ((tMonth == 11) && (tagNumber == 3)) {
+        
+        //文化の日（11月3日なら）
+        holidayFlag = true;
+    }
+    else if ((tMonth == 11) && (tagNumber == 4) && (i % 7 == 1)) {
+        
+        //文化の日の振替休日（11月4日が月曜なら）
+        holidayFlag = true;
+    }
+    else if ((tMonth == 11) && (tagNumber == 23)) {
+        
+        //勤労感謝の日（11月23日なら）
+        holidayFlag = true;
+    }
+    else if ((tMonth == 11) && (tagNumber == 24) && (i % 7 == 1)) {
+        
+        //勤労感謝の日の振替休日（11月24日が月曜なら）
+        holidayFlag = true;
+    }
+    else if ((tMonth == 12) && (tagNumber == 23)) {
+        
+        //天皇誕生日（12月23日なら）
+        holidayFlag = true;
+    }
+    else if ((tMonth == 12) && (tagNumber == 24) && (i % 7 == 1)) {
+        
+        //天皇誕生日の振替休日（12月24日が月曜なら）
+        holidayFlag = true;
+    }
+    return holidayFlag;
+}
+/* ----------- 祝日計算用の関数（おわり） -----------*/
 
 //現在の年月に該当するデータを取得
 - (void)setupCurrentCalendarData
