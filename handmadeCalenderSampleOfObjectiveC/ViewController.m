@@ -470,7 +470,7 @@
 - (void)setupCurrentCalendarData
 {
     //inUnitで指定した単位（月）の中で、rangeOfUnit:で指定した単位（日）が取り得る範囲
-    NSCalendar *currentCalendar = [NSCalendar currentCalendar];
+    NSCalendar *currentCalendar = [[NSCalendar alloc]  initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     NSCalendarUnit flag = NSCalendarUnitEra | NSCalendarUnitYear | NSCalendarUnitMonth;
     NSDateComponents *currentComps = [currentCalendar components:flag fromDate:currentDate];
     
@@ -486,7 +486,7 @@
 - (void)setupPrevCalendarData
 {
     //一ヶ月前の日付を取得する
-    NSCalendar *prevCalendar = [NSCalendar currentCalendar];
+    NSCalendar *prevCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     NSDateComponents *prevComps = [[NSDateComponents alloc] init];
     [prevComps setMonth:-1];
     currentDate = [prevCalendar dateByAddingComponents:prevComps toDate:currentDate options:0];
@@ -499,7 +499,7 @@
 - (void)setupNextCalendarData
 {
     //一ヶ月先の日付を取得する
-    NSCalendar *nextCalendar = [NSCalendar currentCalendar];
+    NSCalendar *nextCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     NSDateComponents *nextComps = [[NSDateComponents alloc] init];
     [nextComps setMonth:1];
     currentDate = [nextCalendar dateByAddingComponents:nextComps toDate:currentDate options:0];
