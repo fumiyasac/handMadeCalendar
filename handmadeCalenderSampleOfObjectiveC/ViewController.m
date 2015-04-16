@@ -251,10 +251,10 @@
     
     //タグナンバーとトータルカウントを定義する
     int total = 42;
-    bool flg = false;
     
     //42個のボタンを配置する
     for(int i=0; i<total; i++) {
+        bool flg = false;
         
         //配置場所の定義
         int positionX  = calendarIntervalX + calendarX * (i % 7);
@@ -283,9 +283,6 @@
             
         }else if(i < total){
             
-            //2018年4月30日のように最終日が祝日になる場合があるのでフラグをもとに戻す
-            flg = false;
-            
             //日付の入らない部分はボタンを押せなくする
             [button setTitle:@"" forState:UIControlStateNormal];
             [button setEnabled:NO];
@@ -293,22 +290,12 @@
         }
         
         //ボタンデザインと配色の決定
-        if(i % 7 == 0){
+        if(i % 7 == 0 || flg){ // 日曜日と祝日は赤くする
             calendarBackGroundColor = [UIColor colorWithRed:0.831 green:0.349 blue:0.224 alpha:1.0];
-        }else if(i % 7 == 6){
-            //祝日フラグの判定
-            if(flg){
-                calendarBackGroundColor = [UIColor colorWithRed:0.831 green:0.349 blue:0.224 alpha:1.0];
-            }else{
-                calendarBackGroundColor = [UIColor colorWithRed:0.400 green:0.471 blue:0.980 alpha:1.0];
-            }
+        }else if(i % 7 == 6){ // 土曜日は青くする
+            calendarBackGroundColor = [UIColor colorWithRed:0.400 green:0.471 blue:0.980 alpha:1.0];
         }else{
-            //祝日フラグの判定
-            if(flg){
-                calendarBackGroundColor = [UIColor colorWithRed:0.831 green:0.349 blue:0.224 alpha:1.0];
-            }else{
-                calendarBackGroundColor = [UIColor lightGrayColor];
-            }
+            calendarBackGroundColor = [UIColor lightGrayColor];
         }
         
         //ボタンのデザインを決定する
