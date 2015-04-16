@@ -250,7 +250,6 @@
 - (void)generateCalendar{
     
     //タグナンバーとトータルカウントを定義する
-    int tagNumber = 1;
     int total = 42;
     bool flg = false;
     
@@ -272,7 +271,8 @@
             [button setTitle:@"" forState:UIControlStateNormal];
             [button setEnabled:NO];
             
-        }else if(i == dayOfWeek - 1 || i < dayOfWeek + maxDay - 1){
+        }else if(i < dayOfWeek + maxDay - 1){
+            int tagNumber = i - dayOfWeek + 2;
             
             flg = [self holidayCalc:year tMonth:month tDay:tagNumber tIndex:i];
             
@@ -280,9 +280,8 @@
             NSString *tagNumberString = [NSString stringWithFormat:@"%d", tagNumber];
             [button setTitle:tagNumberString forState:UIControlStateNormal];
             button.tag = tagNumber;
-            tagNumber++;
             
-        }else if(i == dayOfWeek + maxDay - 1 || i < total){
+        }else if(i < total){
             
             //2018年4月30日のように最終日が祝日になる場合があるのでフラグをもとに戻す
             flg = false;
