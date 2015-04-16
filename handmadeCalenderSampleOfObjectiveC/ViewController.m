@@ -21,6 +21,7 @@
     NSMutableArray *mArray;
     
     //カレンダー表示用メンバ変数
+    NSDate *currentDate;
     int year;
     int month;
     int maxDay;
@@ -157,28 +158,7 @@
     [self.nextMonthButton.layer setCornerRadius:buttonRadius];
     
     //現在の日付を取得
-    NSDate *now = [NSDate date];
-    
-    //inUnit:で指定した単位（月）の中で、rangeOfUnit:で指定した単位（日）が取り得る範囲
-    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSRange range = [calendar rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:now];
-    
-    //最初にメンバ変数に格納するための現在日付の情報を取得する
-    NSUInteger flags = NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday;
-    NSDateComponents *comps = [calendar components:flags fromDate:now];
-    
-    //年月日と最後の日付を取得(NSIntegerをintへ変換)
-    NSInteger orgYear      = comps.year;
-    NSInteger orgMonth     = comps.month;
-    NSInteger orgDayOfWeek = comps.weekday;
-    NSInteger max          = range.length;
-    
-    year      = (int)orgYear;
-    month     = (int)orgMonth;
-    dayOfWeek = (int)orgDayOfWeek;
-    
-    //月末日(NSIntegerをintへ変換)
-    maxDay = (int)max;
+    currentDate = [NSDate date];
     
     //空の配列を作成する（カレンダーデータの格納用）
     mArray = [NSMutableArray new];
@@ -491,13 +471,12 @@
 {
     //inUnitで指定した単位（月）の中で、rangeOfUnit:で指定した単位（日）が取り得る範囲
     NSCalendar *currentCalendar = [NSCalendar currentCalendar];
-    NSDateComponents *currentComps = [[NSDateComponents alloc] init];
+    NSCalendarUnit flag = NSCalendarUnitEra | NSCalendarUnitYear | NSCalendarUnitMonth;
+    NSDateComponents *currentComps = [currentCalendar components:flag fromDate:currentDate];
     
     //該当月の1日の情報を取得する（※カレンダーが始まる場所を取得するため）
-    [currentComps setYear:year];
-    [currentComps setMonth:month];
     [currentComps setDay:1];
-    NSDate *currentDate = [currentCalendar dateFromComponents:currentComps];
+    currentDate = [currentCalendar dateFromComponents:currentComps];
     
     //カレンダー情報を再作成する
     [self recreateCalendarParameter:currentCalendar dateObject:currentDate];
@@ -506,60 +485,36 @@
 //prevボタン押下に該当するデータを取得
 - (void)setupPrevCalendarData
 {
-    //前の月を設定する
-    if(month == 0){
-        year = year - 1;
-        month = 12;
-    }else{
-        month = month - 1;
-    }
-    
-    //inUnit:で指定した単位（月）の中で、rangeOfUnit:で指定した単位（日）が取り得る範囲
+    //一ヶ月前の日付を取得する
     NSCalendar *prevCalendar = [NSCalendar currentCalendar];
     NSDateComponents *prevComps = [[NSDateComponents alloc] init];
-    
-    //該当月の1日の情報を取得する（※カレンダーが始まる場所を取得するため）
-    [prevComps setYear:year];
-    [prevComps setMonth:month];
-    [prevComps setDay:1];
-    NSDate *prevDate = [prevCalendar dateFromComponents:prevComps];
+    [prevComps setMonth:-1];
+    currentDate = [prevCalendar dateByAddingComponents:prevComps toDate:currentDate options:0];
     
     //カレンダー情報を再作成する
-    [self recreateCalendarParameter:prevCalendar dateObject:prevDate];
+    [self recreateCalendarParameter:prevCalendar dateObject:currentDate];
 }
 
 //nextボタン押下に該当するデータを取得
 - (void)setupNextCalendarData
 {
-    //次の月を設定する
-    if(month == 12){
-        year = year + 1;
-        month = 1;
-    }else{
-        month = month + 1;
-    }
-    
-    //inUnit:で指定した単位（月）の中で、rangeOfUnit:で指定した単位（日）が取り得る範囲
+    //一ヶ月先の日付を取得する
     NSCalendar *nextCalendar = [NSCalendar currentCalendar];
     NSDateComponents *nextComps = [[NSDateComponents alloc] init];
-    
-    //該当月の1日の情報を取得する（※カレンダーが始まる場所を取得するため）
-    [nextComps setYear:year];
-    [nextComps setMonth:month];
-    [nextComps setDay:1];
-    NSDate *nextDate = [nextCalendar dateFromComponents:nextComps];
+    [nextComps setMonth:1];
+    currentDate = [nextCalendar dateByAddingComponents:nextComps toDate:currentDate options:0];
     
     //カレンダー情報を再作成する
-    [self recreateCalendarParameter:nextCalendar dateObject:nextDate];
+    [self recreateCalendarParameter:nextCalendar dateObject:currentDate];
 }
 
 //カレンダーのパラメータを作成する関数
-- (void)recreateCalendarParameter:(NSCalendar *)currentCalendar dateObject:(NSDate *)currentDate
+- (void)recreateCalendarParameter:(NSCalendar *)currentCalendar dateObject:(NSDate *)date
 {
     NSUInteger flags = NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday;
-    NSDateComponents *comps = [currentCalendar components:flags fromDate:currentDate];
+    NSDateComponents *comps = [currentCalendar components:flags fromDate:date];
     
-    NSRange currentRange = [currentCalendar rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:currentDate];
+    NSRange currentRange = [currentCalendar rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:date];
     
     //年月日と最後の日付を取得(NSIntegerをintへ変換)
     NSInteger currentYear      = comps.year;
