@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BE3D0C111AE071B100636FEF /* NSDate+AZDateBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = BE3D0C101AE071B100636FEF /* NSDate+AZDateBuilder.m */; };
 		DE3BE56D1A5EC34400C49B3C /* DeviseSize.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3BE56C1A5EC34400C49B3C /* DeviseSize.m */; };
 		DEA20B731A08354C002FA862 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DEA20B721A08354C002FA862 /* main.m */; };
 		DEA20B761A08354C002FA862 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DEA20B751A08354C002FA862 /* AppDelegate.m */; };
@@ -28,6 +29,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BE3D0C0F1AE071B100636FEF /* NSDate+AZDateBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+AZDateBuilder.h"; sourceTree = "<group>"; };
+		BE3D0C101AE071B100636FEF /* NSDate+AZDateBuilder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+AZDateBuilder.m"; sourceTree = "<group>"; };
 		DE3BE56B1A5EC34400C49B3C /* DeviseSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviseSize.h; sourceTree = "<group>"; };
 		DE3BE56C1A5EC34400C49B3C /* DeviseSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviseSize.m; sourceTree = "<group>"; };
 		DEA20B6D1A08354C002FA862 /* handmadeCalenderSampleOfObjectiveC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = handmadeCalenderSampleOfObjectiveC.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -63,6 +66,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BE3D0C0E1AE071B100636FEF /* Lib */ = {
+			isa = PBXGroup;
+			children = (
+				BE3D0C0F1AE071B100636FEF /* NSDate+AZDateBuilder.h */,
+				BE3D0C101AE071B100636FEF /* NSDate+AZDateBuilder.m */,
+			);
+			path = Lib;
+			sourceTree = "<group>";
+		};
 		DEA20B641A08354C002FA862 = {
 			isa = PBXGroup;
 			children = (
@@ -110,6 +122,7 @@
 		DEA20B891A08354C002FA862 /* handmadeCalenderSampleOfObjectiveCTests */ = {
 			isa = PBXGroup;
 			children = (
+				BE3D0C0E1AE071B100636FEF /* Lib */,
 				DEA20B8C1A08354C002FA862 /* handmadeCalenderSampleOfObjectiveCTests.m */,
 				DEA20B8A1A08354C002FA862 /* Supporting Files */,
 			);
@@ -236,6 +249,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DEA20B8D1A08354C002FA862 /* handmadeCalenderSampleOfObjectiveCTests.m in Sources */,
+				BE3D0C111AE071B100636FEF /* NSDate+AZDateBuilder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
