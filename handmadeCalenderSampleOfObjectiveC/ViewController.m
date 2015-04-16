@@ -18,20 +18,13 @@
 
 //使い回す変数を設定する
 {
-    int count;
     NSMutableArray *mArray;
     
     //カレンダー表示用メンバ変数
-    NSDate *now;
     int year;
     int month;
-    int day;
     int maxDay;
     int dayOfWeek;
-    
-    //カレンダーから取得したものを格納する
-    NSUInteger flags;
-    NSDateComponents *comps;
     
     //ボタンのバックグラウンドカラー
     UIColor *calendarBackGroundColor;
@@ -164,26 +157,24 @@
     [self.nextMonthButton.layer setCornerRadius:buttonRadius];
     
     //現在の日付を取得
-    now = [NSDate date];
+    NSDate *now = [NSDate date];
     
     //inUnit:で指定した単位（月）の中で、rangeOfUnit:で指定した単位（日）が取り得る範囲
     NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     NSRange range = [calendar rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:now];
     
     //最初にメンバ変数に格納するための現在日付の情報を取得する
-    flags = NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday;
-    comps = [calendar components:flags fromDate:now];
+    NSUInteger flags = NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday;
+    NSDateComponents *comps = [calendar components:flags fromDate:now];
     
     //年月日と最後の日付を取得(NSIntegerをintへ変換)
     NSInteger orgYear      = comps.year;
     NSInteger orgMonth     = comps.month;
-    NSInteger orgDay       = comps.day;
     NSInteger orgDayOfWeek = comps.weekday;
     NSInteger max          = range.length;
     
     year      = (int)orgYear;
     month     = (int)orgMonth;
-    day       = (int)orgDay;
     dayOfWeek = (int)orgDayOfWeek;
     
     //月末日(NSIntegerをintへ変換)
@@ -565,21 +556,19 @@
 //カレンダーのパラメータを作成する関数
 - (void)recreateCalendarParameter:(NSCalendar *)currentCalendar dateObject:(NSDate *)currentDate
 {
-    flags = NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday;
-    comps = [currentCalendar components:flags fromDate:currentDate];
+    NSUInteger flags = NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitWeekday;
+    NSDateComponents *comps = [currentCalendar components:flags fromDate:currentDate];
     
     NSRange currentRange = [currentCalendar rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:currentDate];
     
     //年月日と最後の日付を取得(NSIntegerをintへ変換)
     NSInteger currentYear      = comps.year;
     NSInteger currentMonth     = comps.month;
-    NSInteger currentDay       = comps.day;
     NSInteger currentDayOfWeek = comps.weekday;
     NSInteger currentMax       = currentRange.length;
     
     year      = (int)currentYear;
     month     = (int)currentMonth;
-    day       = (int)currentDay;
     dayOfWeek = (int)currentDayOfWeek;
     maxDay    = (int)currentMax;
 }
