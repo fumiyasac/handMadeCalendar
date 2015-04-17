@@ -159,7 +159,17 @@
 
         // 休日一覧にある場合は、休日と判定する
         BOOL expect = [self.holydays containsObject:date];
-        XCTAssertEqual(isHolyday, expect, @"date: %@", date);
+        XCTAssertEqual(isHolyday, expect, @"date: %@, i: %d", date, i);
     }
+}
+
+- (void)test2015_5_6 {
+    BOOL isHolyday = [self.viewController holidayCalc:2015 tMonth:5 tDay:6 tIndex:10];
+    XCTAssertEqual(isHolyday, YES);
+}
+
+- (void)test2015_9_22 {
+    BOOL isHolyday = [self.viewController holidayCalc:2015 tMonth:9 tDay:22 tIndex:23];
+    XCTAssertEqual(isHolyday, YES);
 }
 @end

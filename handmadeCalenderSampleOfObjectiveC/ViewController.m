@@ -289,7 +289,20 @@
 //祝日を判定する
 /* ----------- 祝日計算用の関数（はじめ） -----------*/
 - (BOOL)holidayCalc:(int)tYear tMonth:(int)tMonth tDay:(int)tDay tIndex:(int)i{
-    
+    BOOL isHolyday = [self holiday:tYear tMonth:tMonth tDay:tDay tIndex:i];
+    // 振替休日を調べる。前日以前が祝日又は祝日が連続しているとき、そのいずれかが日曜日であった場合振替休日とする
+    if (!isHolyday) {
+        for (int j = 1; [self holiday:tYear tMonth:tMonth tDay:tDay - j tIndex:i - j]; j++) {
+            if ((i - j) % 7 == 0) {
+                isHolyday = YES;
+                break;
+            }
+        }
+    }
+    return isHolyday;
+}
+
+- (BOOL)holiday:(int)tYear tMonth:(int)tMonth tDay:(int)tDay tIndex:(int)i {
     //春分・秋分の計算式
     int y2 = (tYear - 2000);
     int syunbun = (int)(20.69115 + 0.2421904 * y2 - (int)(y2/4 + y2/100 + y2/400));
@@ -299,11 +312,6 @@
     if ((tMonth == 1) && (tDay == 1)) {
         
         //元日（1月1日なら）
-        holidayFlag = true;
-    }
-    else if ((tMonth == 1) && (i % 7 == 1) && (tDay == 2)) {
-        
-        //元日の振替休日（1月2日が月曜なら）
         holidayFlag = true;
     }
     else if ((tMonth == 1) && ( (i == 8 || i == 15) && (tDay >= 8 && tDay <= 14) ) && (i % 7 == 1)) {
@@ -316,19 +324,9 @@
         //建国記念の日（2月11日なら）
         holidayFlag = true;
     }
-    else if ((tMonth == 2) && (tDay == 12) && (i % 7 == 1)) {
-        
-        //建国記念の日の振替休日（2月12日が月曜なら）
-        holidayFlag = true;
-    }
     else if ((tYear  > 1999) && (tMonth == 3) && (tDay == syunbun)) {
         
         //春分の日（計算式による）
-        holidayFlag = true;
-    }
-    else if ((tYear  > 1999) && (tMonth == 3) && (tDay == (syunbun + 1)) && (i % 7 == 1)) {
-        
-        //春分の日の振替休日
         holidayFlag = true;
     }
     else if ((tMonth == 4) && (tDay == 29)) {
@@ -336,17 +334,9 @@
         //2006年みどりの日（4月29日なら）
         holidayFlag = true;
     }
-    else if ((tMonth == 4) && (tDay == 30) && (i % 7 == 1)) {
-        
-        //みどりの日の振替休日（4月30日が月曜なら）
-        holidayFlag = true;
-    }
     else if ((tMonth == 5) && (tDay == 3)) {
-        if ((tYear > 2006) && (i % 7 == 0)) {
-            goldenWeekFlag = true;
-        }else{
-            goldenWeekFlag = false;
-        }
+        
+        // 憲法記念日（5月3日なら）
         holidayFlag = true;
     }
     else if (
@@ -363,10 +353,6 @@
     else if ((tYear > 2006) && (tMonth == 5) && (tDay == 4)) {
         
         //2007年以降みどりの日（5月4日なら）
-        if ((tYear > 2006) && (goldenWeekFlag != true) && (i % 7 == 0)) {
-            //みどりの日が日曜なら
-            goldenWeekFlag = true;
-        }
         holidayFlag = true;
     }
     else if ((tMonth == 5) && (tDay == 5)) {
@@ -378,16 +364,6 @@
         }
         holidayFlag = true;
     }
-    else if ((tYear < 2007) && (tMonth == 5) && (tDay == 6) && (i % 7 == 1)) {
-        
-        //こどもの日の振替休日（5月6日が月曜なら）
-        holidayFlag = true;
-    }
-    else if ((tYear > 2006) && (goldenWeekFlag == true) && (tMonth == 5) && (tDay == 6)) {
-        
-        //３連祝日のどれかが日曜なら振替休日
-        holidayFlag = true;
-    }
     else if ((tMonth == 7) && ((i == 15 || i == 22) && (tDay >= 15 && tDay <= 21)) && (i % 7 == 1)) {
         
         //海の日（7月の第3月曜なら）
@@ -396,11 +372,6 @@
     else if ((tYear > 2015) && (tMonth == 8) && (tDay == 11)) {
         
         //2016年以降、山の日（8月11日）なら
-        holidayFlag = true;
-    }
-    else if ((tYear > 2015) && (tMonth == 8) && (tDay == 12) && (i % 7 == 1)) {
-        
-        //山の日の振替休日（8月12日が月曜なら）
         holidayFlag = true;
     }
     else if ((tMonth == 9) && ((i == 15 || i == 22) && (tDay >= 15 && tDay <= 21)) && (i % 7 == 1)) {
@@ -422,11 +393,6 @@
         //秋分の日（計算式による）
         holidayFlag = true;
     }
-    else if ((tYear  > 1999 ) && (tMonth == 9) && (tDay == (syuubun + 1)) && (i % 7 == 1)) {
-        
-        //秋分の日の振替休日
-        holidayFlag = true;
-    }
     else if ((tMonth == 10) && ((i == 8 || i == 15) && (tDay >= 8 && tDay <= 14)) && (i % 7 == 1)) {
         
         //体育の日（10月の第2月曜なら）
@@ -437,29 +403,14 @@
         //文化の日（11月3日なら）
         holidayFlag = true;
     }
-    else if ((tMonth == 11) && (tDay == 4) && (i % 7 == 1)) {
-        
-        //文化の日の振替休日（11月4日が月曜なら）
-        holidayFlag = true;
-    }
     else if ((tMonth == 11) && (tDay == 23)) {
         
         //勤労感謝の日（11月23日なら）
         holidayFlag = true;
     }
-    else if ((tMonth == 11) && (tDay == 24) && (i % 7 == 1)) {
-        
-        //勤労感謝の日の振替休日（11月24日が月曜なら）
-        holidayFlag = true;
-    }
     else if ((tMonth == 12) && (tDay == 23)) {
         
         //天皇誕生日（12月23日なら）
-        holidayFlag = true;
-    }
-    else if ((tMonth == 12) && (tDay == 24) && (i % 7 == 1)) {
-        
-        //天皇誕生日の振替休日（12月24日が月曜なら）
         holidayFlag = true;
     }
     return holidayFlag;
