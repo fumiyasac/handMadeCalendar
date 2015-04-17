@@ -40,13 +40,6 @@
     
     float buttonRadius;
     
-    /* ----------- 祝日判定計算用メンバ変数（はじめ） -----------*/
-    //9月の国民の祝日判定用変数
-    int kokumin;
-    //5月のゴールデンウィークが日曜日と重なる場合の判定用変数
-    bool goldenWeekFlag;
-    /* ----------- 祝日判定計算用メンバ変数（おわり） -----------*/
-    
     int calendarIntervalX;
     int calendarX;
     int calendarIntervalY;
@@ -289,17 +282,21 @@
 //祝日を判定する
 /* ----------- 祝日計算用の関数（はじめ） -----------*/
 - (BOOL)holidayCalc:(int)tYear tMonth:(int)tMonth tDay:(int)tDay tIndex:(int)i{
-    BOOL isHolyday = [self holiday:tYear tMonth:tMonth tDay:tDay tIndex:i];
+    if ([self holiday:tYear tMonth:tMonth tDay:tDay tIndex:i]) {
+        return YES;
+    }
+    // 国民の休日。翌日と前日が祝日の場合国民の休日とする
+    if ([self holiday:tYear tMonth:tMonth tDay:tDay + 1 tIndex:i + 1] && [self holiday:tYear tMonth:tMonth tDay:tDay - 1 tIndex:i - 1]) {
+        return 1;
+    }
+        
     // 振替休日を調べる。前日以前が祝日又は祝日が連続しているとき、そのいずれかが日曜日であった場合振替休日とする
-    if (!isHolyday) {
-        for (int j = 1; [self holiday:tYear tMonth:tMonth tDay:tDay - j tIndex:i - j]; j++) {
-            if ((i - j) % 7 == 0) {
-                isHolyday = YES;
-                break;
-            }
+    for (int j = 1; [self holiday:tYear tMonth:tMonth tDay:tDay - j tIndex:i - j]; j++) {
+        if ((i - j) % 7 == 0) {
+            return YES;
         }
     }
-    return isHolyday;
+    return false;
 }
 
 - (BOOL)holiday:(int)tYear tMonth:(int)tMonth tDay:(int)tDay tIndex:(int)i {
@@ -339,17 +336,6 @@
         // 憲法記念日（5月3日なら）
         holidayFlag = true;
     }
-    else if (
-             ((tYear < 2007) && (tMonth == 5) && (tDay == 4) && (i % 7 == 2)) ||
-             ((tYear < 2007) && (tMonth == 5) && (tDay == 4) && (i % 7 == 3)) ||
-             ((tYear < 2007) && (tMonth == 5) && (tDay == 4) && (i % 7 == 4)) ||
-             ((tYear < 2007) && (tMonth == 5) && (tDay == 4) && (i % 7 == 5)) ||
-             ((tYear < 2007) && (tMonth == 5) && (tDay == 4) && (i % 7 == 6))
-            ) {
-        
-        //国民の休日（5月4日が火～土曜日なら）
-        holidayFlag = true;
-    }
     else if ((tYear > 2006) && (tMonth == 5) && (tDay == 4)) {
         
         //2007年以降みどりの日（5月4日なら）
@@ -358,10 +344,6 @@
     else if ((tMonth == 5) && (tDay == 5)) {
         
         //こどもの日（5月5日なら）
-        if ((tYear > 2006) && (goldenWeekFlag != true) && (i % 7 == 0)) {
-            //こどもの日が日曜なら
-            goldenWeekFlag = true;
-        }
         holidayFlag = true;
     }
     else if ((tMonth == 7) && ((i == 15 || i == 22) && (tDay >= 15 && tDay <= 21)) && (i % 7 == 1)) {
@@ -377,15 +359,6 @@
     else if ((tMonth == 9) && ((i == 15 || i == 22) && (tDay >= 15 && tDay <= 21)) && (i % 7 == 1)) {
         
         //敬老の日（9月の第3月曜なら）
-        int keiro = tDay;
-        if ((syuubun - keiro) == 2) {
-            kokumin = syuubun - 1;
-        }
-        holidayFlag = true;
-    }
-    else if ((kokumin) && ((tMonth == 9) && (tDay == kokumin))) {
-        
-        //９月の国民の休日が有りなら
         holidayFlag = true;
     }
     else if ((tYear  > 1999 ) && (tMonth == 9) && (tDay == syuubun)) {
